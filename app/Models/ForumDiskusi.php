@@ -6,14 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class ForumDiskusi extends Model
 {
-    protected $fillable = ['program_id', 'judul', 'konten', 'tanggal_dibuat'];
+    protected $fillable = ['judul', 'konten', 'user_id', 'tanggal_dibuat'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function program()
     {
         return $this->belongsTo(ProgramRelawan::class);
     }
 
-    public function komentar()
+    public function komentars()
     {
         return $this->hasMany(KomentarForum::class, 'forum_id');
     }

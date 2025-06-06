@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('forum_id')->constrained('forum_diskusis', 'id')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->text('komentar');
-            $table->dateTime('tanggal');
+            $table->dateTime('tanggal_komentar');
             $table->timestamps();
         });
     }

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hak_akses', function (Blueprint $table) {
+        Schema::create('relawan_pesertas', function (Blueprint $table) {
             $table->id();
-            $table->string('role');
-            $table->string('modul');
-            $table->string('hak_akses');
-            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('program_relawan_id')->constrained()->onDelete('cascade');
+            $table->string('no_hp');
+            $table->text('motivasi');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hak_akses');
+        Schema::dropIfExists('relawan_pesertas');
     }
 };

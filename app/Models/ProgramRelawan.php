@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProgramRelawan extends Model
 {
-    protected $fillable = ['nama_program', 'deskripsi', 'status', 'tanggal_mulai', 'tanggal_selesai', 'user_id'];
+    protected $fillable = ['nama_program', 'deskripsi', 'status', 'tanggal_mulai', 'tanggal_selesai', 'user_id', 'gambar'];
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id');
+        return $this->belongsTo(User::class);
     }
 
-    public function donasi()
+    public function pesertas()
     {
-        return $this->hasMany(Donasi::class);
+        return $this->hasMany(RelawanPeserta::class);
     }
 
     public function sertifikat()
@@ -38,18 +38,8 @@ class ProgramRelawan extends Model
         return $this->hasMany(KalenderKegiatan::class);
     }
 
-    public function grupRelawan()
-    {
-        return $this->hasMany(GrupRelawan::class);
-    }
-
     public function statistikLaporan()
     {
         return $this->hasMany(StatistikLaporan::class);
-    }
-
-    public function galeri()
-    {
-        return $this->hasMany(Galeri::class);
     }
 }

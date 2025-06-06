@@ -6,11 +6,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +24,7 @@ class User extends Authenticatable
 
     public function programRelawan()
     {
-        return $this->hasMany(ProgramRelawan::class, 'user_id');
+        return $this->hasMany(ProgramRelawan::class);
     }
 
     public function donasi()
@@ -61,7 +64,7 @@ class User extends Authenticatable
 
     public function blogArtikel()
     {
-        return $this->hasMany(BlogArtikel::class, 'user_id');
+        return $this->hasMany(BlogArtikel::class);
     }
 
     public function gamifikasi()
@@ -96,4 +99,21 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        logger('Panel ID: ' . $panel->getId());
+        logger('User role: ' . $this->role);
+
+        if ($panel->getId() === 'admin') {
+            return $this->role === 'admin';
+        }
+
+        if ($panel->getId() === 'komunitas') {
+            return $this->role === 'komunitas';
+        }
+
+        return false;
+    }
+
 }

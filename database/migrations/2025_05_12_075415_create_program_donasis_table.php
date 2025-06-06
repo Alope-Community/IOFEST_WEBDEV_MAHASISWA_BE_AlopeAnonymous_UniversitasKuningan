@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('program_donasis', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_program');
+            $table->string('category');
+            $table->text('deskripsi');
+            $table->string('status');
+            $table->date('tanggal_mulai');
+            $table->date('tanggal_selesai');
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
-            $table->foreignId('program_id')->nullable()->constrained('program_relawans', 'id')->onDelete('set null');
-            $table->decimal('jumlah', 15, 2);
-            $table->string('metode_pembayaran');
-            $table->dateTime('tanggal');
+            $table->string('gambar');
             $table->timestamps();
         });
     }

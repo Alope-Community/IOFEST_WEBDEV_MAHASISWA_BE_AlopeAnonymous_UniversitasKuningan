@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('blog_artikels', function (Blueprint $table) {
             $table->id();
             $table->string('judul');
+            $table->string('lokasi');
             $table->text('konten');
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->dateTime('tanggal_diterbitkan');
+            $table->string('gambar');
             $table->timestamps();
         });
     }

@@ -6,16 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProgramDonasi extends Model
 {
-    
-    protected $fillable = ['user_id', 'program_id', 'jumlah', 'metode_pembayaran', 'tanggal'];
+    protected $fillable = ['nama_program', 'deskripsi', 'status', 'tanggal_mulai', 'tanggal_selesai', 'user_id', 'gambar'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function program()
+    public function pesertas()
     {
-        return $this->belongsTo(ProgramRelawan::class);
+        return $this->hasMany(DonasiPeserta::class);
     }
 }

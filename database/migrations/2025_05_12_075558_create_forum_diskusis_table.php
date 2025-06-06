@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('forum_diskusis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('program_id')->constrained('program_relawans', 'id')->onDelete('cascade');
             $table->string('judul');
             $table->text('konten');
+            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->dateTime('tanggal_dibuat');
             $table->timestamps();
         });

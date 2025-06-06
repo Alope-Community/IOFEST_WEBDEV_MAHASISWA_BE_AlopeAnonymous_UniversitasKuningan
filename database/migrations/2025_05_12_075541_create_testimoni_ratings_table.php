@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('testimoni_ratings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
-            $table->foreignId('program_id')->constrained('program_relawans', 'id')->onDelete('cascade');
-            $table->text('testimoni');
+            $table->foreignId('program_relawan_id')->constrained('program_relawans', 'id')->onDelete('cascade');
+            $table->text('pesan');
             $table->integer('rating');
-            $table->dateTime('tanggal');
             $table->timestamps();
         });
     }

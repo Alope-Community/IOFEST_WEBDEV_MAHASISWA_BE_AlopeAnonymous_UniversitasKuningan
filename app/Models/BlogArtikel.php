@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class BlogArtikel extends Model
 {
-    protected $fillable = ['judul', 'konten', 'user_id', 'tanggal_diterbitkan'];
+    protected $fillable = ['judul', 'lokasi', 'konten', 'user_id', 'tanggal_diterbitkan', 'gambar'];
 
-    public function admin()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 }

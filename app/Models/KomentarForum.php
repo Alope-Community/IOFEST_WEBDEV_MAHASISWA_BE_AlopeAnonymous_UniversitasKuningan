@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class KomentarForum extends Model
 {
-    protected $fillable = ['forum_id', 'user_id', 'komentar', 'tanggal'];
+    protected $fillable = ['forum_id', 'user_id', 'komentar', 'tanggal_komentar'];
 
     public function forum()
     {

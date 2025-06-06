@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('program_relawans', function (Blueprint $table) {
             $table->id();
             $table->string('nama_program');
+            $table->string('category');
             $table->text('deskripsi');
-            $table->string('status');
+            $table->enum('status', ['Belum Mulai', 'Berlangsung', 'Selesai']);
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
+            $table->string('gambar');
             $table->timestamps();
         });
     }
