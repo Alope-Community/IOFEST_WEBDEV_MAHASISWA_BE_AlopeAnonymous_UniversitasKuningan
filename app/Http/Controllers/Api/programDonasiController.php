@@ -91,6 +91,8 @@ class programDonasiController extends Controller
             'ucapan' => $validated['ucapan'] ?? null,
         ]);
 
+        $request->user()->tambahPoin(5, 'Program_Donasi', 'Berpartisipasi dalam Program Berdonasi');
+
         return response()->json([
             'status' => 'success',
             'message' => 'Donasi berhasil didaftarkan.',

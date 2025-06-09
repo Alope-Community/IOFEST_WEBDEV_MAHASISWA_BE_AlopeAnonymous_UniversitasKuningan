@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -52,29 +53,24 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(KomentarForum::class);
     }
 
-    public function anggotaGrup()
-    {
-        return $this->hasMany(AnggotaGrup::class);
-    }
-
-    public function statistikLaporan()
-    {
-        return $this->hasMany(StatistikLaporan::class, 'user_id');
-    }
-
     public function blogArtikel()
     {
         return $this->hasMany(BlogArtikel::class);
     }
 
-    public function gamifikasi()
+    public function poinHistories(): HasMany
     {
-        return $this->hasMany(Gamifikasi::class);
+        return $this->hasMany(UserPoinHistory::class);
     }
-
-    public function hakAkses()
+    public function tambahPoin(int $jumlah, string $aktivitas, string $keterangan = null): void
     {
-        return $this->hasMany(HakAkses::class);
+        $this->increment('point', $jumlah);
+
+        $this->poinHistories()->create([
+            'aktivitas' => $aktivitas,
+            'point' => $jumlah,
+            'keterangan' => $keterangan,
+        ]);
     }
 
     /**

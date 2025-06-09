@@ -1,4 +1,3 @@
-
 # API SPECIFICATION
 
 API Backend untuk platform Pijar Nusantara menggunakan Laravel + Sanctum authentication.
@@ -6,12 +5,10 @@ API Backend untuk platform Pijar Nusantara menggunakan Laravel + Sanctum authent
 ---
 
 ***Note***
-Tolong lakukan ini terlebih dahulu sebelum menggunakan !
+Tolong lakukan ini terlebih dahulu sebelum menggunakan:
 ```bash
 npm install
-
 php artisan storage:link
-
 php artisan icon:cache
 ```
 
@@ -23,8 +20,8 @@ php artisan icon:cache
 **Body:**
 ```json
 {
-  "name": "Dikri Fauzan",
-  "email": "dikri@example.com",
+  "name": "Nama User",
+  "email": "user@example.com",
   "password": "password123",
   "password_confirmation": "password123"
 }
@@ -36,7 +33,7 @@ php artisan icon:cache
 **Body:**
 ```json
 {
-  "email": "dikri@example.com",
+  "email": "user@example.com",
   "password": "password123"
 }
 ```
@@ -57,6 +54,10 @@ php artisan icon:cache
 
 ### 📄 List Program
 **GET** `/api/relawan`
+
+**Query Parameters (optional):**
+- `search`: string untuk pencarian berdasarkan nama atau deskripsi
+- `limit`: jumlah item per halaman (default: 10)
 
 ### 🔍 Detail Program
 **GET** `/api/relawan/{id}`
@@ -119,6 +120,46 @@ php artisan icon:cache
 
 ---
 
+## 📰 Artikel Blog
+
+### 📄 List Artikel
+**GET** `/api/artikel`
+
+**Query Parameters:**
+- `search`: pencarian berdasarkan judul/lokasi
+- `limit`: jumlah item per halaman
+
+### 🔍 Detail Artikel
+**GET** `/api/artikel/{id}`
+
+---
+
+## 💬 Forum Diskusi
+
+### 📄 List Forum
+**GET** `/api/forum`
+
+**Query Parameters:**
+- `search`: pencarian berdasarkan judul/konten
+- `limit`: jumlah item per halaman
+
+### 🔍 Detail Forum + Komentar
+**GET** `/api/forum/{id}`
+
+### ✍️ Tambah Komentar
+**POST** `/api/forum/{id}/komentar`
+
+**Header:** `Authorization: Bearer {token}`
+
+**Body:**
+```json
+{
+  "komentar": "Pendapat saya tentang topik ini..."
+}
+```
+
+---
+
 ## 🧪 Test Endpoint
 
 ### 👤 Get User Info
@@ -149,5 +190,5 @@ php artisan icon:cache
 
 ## 📄 License
 
-Proyek ini berlisensi **Alope-Comunity**.  
+Proyek ini berlisensi **Alope-Community**.  
 Dikembangkan oleh [Dikri Fauzan Amrulloh](https://github.com/dikrifzn).

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gamifikasis', function (Blueprint $table) {
+        Schema::create('user_poin_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('aktivitas');
-            $table->integer('poin_diberikan');
-            $table->dateTime('tanggal');
+            $table->integer('point');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gamifikasis');
+        Schema::dropIfExists('user_poin_histories');
     }
 };

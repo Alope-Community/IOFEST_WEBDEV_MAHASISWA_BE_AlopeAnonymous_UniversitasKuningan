@@ -4,9 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Gamifikasi extends Model
+class UserPoinHistory extends Model
 {
-    protected $fillable = ['user_id', 'aktivitas', 'poin_diberikan', 'tanggal'];
+    protected $fillable = [
+        'user_id',
+        'aktivitas',
+        'point',
+        'keterangan',
+    ];
 
     public function user()
     {

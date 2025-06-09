@@ -81,6 +81,8 @@ class programRelawanController extends Controller
             'motivasi' => $request->motivasi,
         ]);
 
+        $request->user()->tambahPoin(5, 'Program_Relawan', 'Berpartisipasi dalam Program Relawan');
+
         return response()->json([
             'status' => 'success',
             'message' => 'Pendaftaran relawan berhasil.',
@@ -93,7 +95,7 @@ class programRelawanController extends Controller
      */
     public function show(string $id)
     {
-        $relawan = ProgramRelawan::with(['pesertas.user'])->find($id);
+        $relawan = ProgramRelawan::with(['pesertas.user', 'testimoniRatings.user'])->find($id);
         
         if (!$relawan) {
             return response()->json([
@@ -101,6 +103,17 @@ class programRelawanController extends Controller
                 'message' => 'Data Program Relawan tersebut tidak ditemukan!',
             ], 404);
         }
+
+        $testimoni = $relawan->testimoniRatings->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'user_id' => $item->user_id,
+                'user_name' => $item->user->name ?? null,
+                'pesan' => $item->pesan,
+                'rating' => $item->rating,
+                'tanggal' => $item->created_at,
+            ];
+        });
 
         $pesertas = $relawan->pesertas->map(function ($peserta) {
             return [
@@ -121,6 +134,7 @@ class programRelawanController extends Controller
                 'tanggal_selesai' => $relawan->tanggal_selesai,
                 'gambar' => $relawan->gambar,
                 'pesertas' => $pesertas,
+                'testimoni' => $testimoni,
             ];
 
         return response()->json([

@@ -38,7 +38,7 @@ class AuthController extends Controller
                         'name' => $user->name,
                         'email' => $user->email,
                         'created_at' => $user->created_at->format('Y-m-d'),
-                        'poin' => $user->poin ?? 0,
+                        'point' => $user->point ?? 0,
                     ],
             'riwayat_relawan' => $riwayatRelawan->map(function ($item) {
                     return [

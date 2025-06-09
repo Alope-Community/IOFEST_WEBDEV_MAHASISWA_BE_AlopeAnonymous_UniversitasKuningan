@@ -10,14 +10,6 @@ use App\Models\TestimoniRating;
 class TestimoniRatingController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -40,6 +32,8 @@ class TestimoniRatingController extends Controller
                 'message' => 'Kamu belum mengikuti program ini.',
             ], 403);
         }
+
+        $request->user()->tambahPoin(10, 'Program_Relawan', 'Berpartisipasi dalam Program Relawan');
 
         $testimoni = TestimoniRating::create([
             'user_id' => $user->id,

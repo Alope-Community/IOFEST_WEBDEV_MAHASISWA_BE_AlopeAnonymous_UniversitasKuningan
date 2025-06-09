@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProgramRelawanController;
 use App\Http\Controllers\Api\ProgramDonasiController;
 use App\Http\Controllers\Api\TestimoniRatingController;
+use App\Http\Controllers\Api\BlogArtikelController;
+use App\Http\Controllers\Api\ForumController;
 
 // ============================
 // AUTHENTICATION
@@ -44,6 +46,22 @@ Route::prefix('donasi')->group(function () {
     Route::middleware('auth:sanctum')->post('/{id}/daftar', [ProgramDonasiController::class, 'store']);
 });
 
+// ============================
+// ARTIKEL
+// ============================
+Route::prefix('artikel')->group(function () {
+    Route::get('/', [BlogArtikelController::class, 'index']);
+    Route::get('/{id}', [BlogArtikelController::class, 'show']);
+});
+
+// ============================
+// FORUM DISKUSI
+// ============================
+Route::prefix('forum')->group(function () {
+    Route::get('/', [ForumController::class, 'index']);
+    Route::get('/{id}', [ForumController::class, 'show']);
+    Route::middleware('auth:sanctum')->post('/{id}/komentar', [ForumController::class, 'store']);
+});
 
 // ============================
 // USER INFO (Test Endpoint)
