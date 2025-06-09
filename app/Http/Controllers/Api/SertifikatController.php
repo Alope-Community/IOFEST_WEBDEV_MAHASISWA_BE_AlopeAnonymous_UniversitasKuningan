@@ -4,25 +4,23 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\RelawanPeserta;
-use App\Models\TestimoniRating;
-
 use setasign\Fpdi\Fpdi;
 use Illuminate\Support\Facades\Storage;
-use App\Models\ProgramRelawan;
 use App\Models\User;
+use App\Models\ProgramRelawan;
 use App\Models\Sertifikat;
 use Carbon\Carbon;
 
-class TestimoniRatingController extends Controller
+class SertifikatController extends Controller
 {
-    public function generateSertifikat($user, $programId)
+    public function show(Request $request)
     {
         Carbon::setLocale('id');
+        $userId = $request->user()->id;
         $program = ProgramRelawan::findOrFail($programId);
 
         // Buat nomor sertifikat
-        $nomorSertifikat = 'PN-' . now()->format('Ymd') . '-' . $user->id . '-' . $programId;
+        $nomorSertifikat = 'PN-' . now()->format('Ymd') . '-' . $userId . '-' . $programId;
 
         // Inisialisasi PDF
         $pdf = new Fpdi();
@@ -59,60 +57,24 @@ class TestimoniRatingController extends Controller
         $pdf->Cell(200, 10, 'No. Sertifikat: ' . $nomorSertifikat, 0, 0, 'C');
 
         // Simpan file PDF
-        $filename = 'sertifikat_' . $user->name . '_' . $program->nama_program . '.pdf';
+        $filename = 'sertifikat_' . $userId . '_' . $programId . '.pdf';
         $filePath = 'sertifikat/' . $filename;
         $pdf->Output(storage_path('app/public/' . $filePath), 'F');
 
         // Simpan ke database
         Sertifikat::updateOrCreate([
-            'user_id' => $user->id,
+            'user_id' => $userId,
             'program_id' => $programId,
-            'sertifikat_url' => 'storage/' . $filePath,
+            'sertifikat_url' => asset('storage/' . $filePath),
         ], [
             'tanggal_diterbitkan' => now(),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-    }
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'program_relawan_id' => 'required|exists:program_relawans,id',
-            'pesan' => 'required|string|max:500',
-            'rating' => 'required|integer|min:1|max:5',
-        ]);
-
-        $user = $request->user();
-
-        $terdaftar = RelawanPeserta::where('user_id', $user->id)
-            ->where('program_relawan_id', $validated['program_relawan_id'])
-            ->exists();
-
-        if (!$terdaftar) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Kamu belum mengikuti program ini.',
-            ], 403);
-        }
-
-        $request->user()->tambahPoin(10, 'Program_Relawan', 'Berpartisipasi dalam Program Relawan');
-
-        $testimoni = TestimoniRating::create([
-            'user_id' => $user->id,
-            'program_relawan_id' => $validated['program_relawan_id'],
-            'pesan' => $validated['pesan'],
-            'rating' => $validated['rating'],
-        ]);
-
-        $this->generateSertifikat($user, $validated['program_relawan_id']);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Testimoni berhasil ditambahkan.',
-            'data' => $testimoni,
-        ], 201);
+            'message' => 'Sertifikat berhasil dibuat',
+            'download_url' => asset('storage/' . $filePath),
+        ]);
     }
 }

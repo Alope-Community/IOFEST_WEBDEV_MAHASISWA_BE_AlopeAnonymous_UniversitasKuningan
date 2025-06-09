@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProgramRelawanController;
+use App\Http\Controllers\Api\SertifikatController;
 use App\Http\Controllers\Api\ProgramDonasiController;
 use App\Http\Controllers\Api\TestimoniRatingController;
 use App\Http\Controllers\Api\BlogArtikelController;
@@ -35,6 +36,9 @@ Route::prefix('relawan')->group(function () {
     Route::middleware('auth:sanctum')->post('/testimoni', [TestimoniRatingController::class, 'store']);
 });
 
+Route::prefix('sertifikat')->group(function () {
+    Route::middleware('auth:sanctum')->post('/{program}', [SertifikatController::class, 'show'])->name('Sertifkat.show');
+});
 
 // ============================
 // PROGRAM DONASI

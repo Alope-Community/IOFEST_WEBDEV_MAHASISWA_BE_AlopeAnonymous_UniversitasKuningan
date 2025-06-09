@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use App\Models\User;
 use App\Models\RelawanPeserta;
 use App\Models\DonasiPeserta;
+use App\Models\Sertifikat;
 
 class AuthController extends Controller
 {
@@ -23,41 +24,44 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $riwayatRelawan = RelawanPeserta::with('programRelawan')
-                            ->where('user_id', $user->id)
-                            ->get();
+        $riwayatRelawan = RelawanPeserta::with(['programRelawan', 'sertifikat'])
+                    ->where('user_id', $user->id)
+                    ->get();
+
         $riwayatDonasi = DonasiPeserta::with('programDonasi')
-                            ->where('user_id', $user->id)
-                            ->get();
+            ->where('user_id', $user->id)
+            ->get();
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data Profile berhasil diambil!',
             'user' => [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'created_at' => $user->created_at->format('Y-m-d'),
-                        'point' => $user->point ?? 0,
-                    ],
-            'riwayat_relawan' => $riwayatRelawan->map(function ($item) {
-                    return [
-                            'judul' => $item->programRelawan->nama_program ?? '-',
-                            'sudah_berdonasi' => false, // Kalau ingin cek dari riwayat, bisa tambahkan logika
-                            'tanggal_mulai' => $item->programRelawan->tanggal_mulai ?? null,
-                            'tanggal_selesai' => $item->programRelawan->tanggal_selesai ?? null,
-                        ];
-                    }),
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'created_at' => $user->created_at->format('Y-m-d'),
+                'point' => $user->point ?? 0,
+            ],
+            'riwayat_relawan' => $riwayatRelawan->map(function ($item) use ($user) {
+                $program = $item->programRelawan;
+                $sertifikat = $item->sertifikat;
 
+                return [
+                    'judul' => $program->nama_program ?? '-',
+                    'sudah_berdonasi' => false,
+                    'tanggal_mulai' => $program->tanggal_mulai ?? null,
+                    'tanggal_selesai' => $program->tanggal_selesai ?? null,
+                    'sertifikat_url' => $sertifikat?->sertifikat_url,
+                ];
+            }),
             'riwayat_donasi' => $riwayatDonasi->map(function ($item) {
-                    return [
-                            'judul' => $item->programDonasi->nama_program ?? '-',
-                            'bergabung' => true,
-                            'tanggal_mulai' => $item->programDonasi->tanggal_mulai ?? null,
-                            'tanggal_selesai' => $item->programDonasi->tanggal_selesai ?? null,
-                            'sertifikat' => $item->sertifikat_url ?? null,
-                        ];
-                    }),
+                return [
+                    'judul' => $item->programDonasi->nama_program ?? '-',
+                    'bergabung' => true,
+                    'tanggal_mulai' => $item->programDonasi->tanggal_mulai ?? null,
+                    'tanggal_selesai' => $item->programDonasi->tanggal_selesai ?? null
+                ];
+            }),
         ]);
     }
     // REGISTER

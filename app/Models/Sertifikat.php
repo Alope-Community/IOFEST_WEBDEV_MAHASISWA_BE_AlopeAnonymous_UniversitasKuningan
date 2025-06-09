@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sertifikat extends Model
 {
-    protected $fillable = ['user_id', 'program_id', 'tanggal_diterbitkan'];
+    protected $fillable = ['user_id', 'program_id', 'tanggal_diterbitkan', 'sertifikat_url'];
 
     public function user()
     {
