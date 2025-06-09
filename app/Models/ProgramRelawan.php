@@ -20,7 +20,7 @@ class ProgramRelawan extends Model
 
     public function sertifikat()
     {
-        return $this->hasMany(Sertifikat::class);
+        return $this->hasOne(Sertifikat::class);
     }
 
     public function testimoniRatings()

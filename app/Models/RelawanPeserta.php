@@ -17,4 +17,11 @@ class RelawanPeserta extends Model
     {
         return $this->belongsTo(ProgramRelawan::class);
     }
+    
+    public function sertifikat()
+    {
+        return $this->hasOne(Sertifikat::class, 'program_id', 'program_relawan_id')
+                    ->whereColumn('user_id', 'user_id');
+    }
+
 }

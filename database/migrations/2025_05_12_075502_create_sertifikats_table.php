@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->foreignId('program_id')->constrained('program_relawans', 'id')->onDelete('cascade');
             $table->date('tanggal_diterbitkan');
+            $table->string('sertifikat_url');
             $table->timestamps();
         });
     }
