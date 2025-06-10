@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\User;
+use App\Filament\Resources\ProgramDonasiResource\RelationManagers\PesertasRelationManager;
 
 class ProgramDonasiResource extends Resource
 {
@@ -26,6 +28,9 @@ class ProgramDonasiResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('nama_program')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('category')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('deskripsi')
@@ -71,6 +76,7 @@ class ProgramDonasiResource extends Resource
                     ->visibility('public')
                     ->url(fn ($record) => asset('storage/' . $record->gambar)),
                 Tables\Columns\TextColumn::make('nama_program')->searchable(),
+                Tables\Columns\TextColumn::make('category')->searchable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Dibuat Oleh')
                     ->searchable(),
@@ -104,7 +110,7 @@ class ProgramDonasiResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            PesertasRelationManager::class,
         ];
     }
 

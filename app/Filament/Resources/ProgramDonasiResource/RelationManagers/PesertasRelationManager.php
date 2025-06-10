@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ProgramRelawanResource\RelationManagers;
+namespace App\Filament\Resources\ProgramDonasiResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -11,21 +11,25 @@ use Filament\Resources\RelationManagers\RelationManager;
 class PesertasRelationManager extends RelationManager
 {
     protected static string $relationship = 'pesertas';
+
     protected static ?string $title = 'Daftar Peserta';
 
     public function form(Form $form): Form
     {
         return $form->schema([
             Forms\Components\Select::make('user_id')
-                ->label('Nama Peserta')
+                ->label('Donatur')
                 ->relationship('user', 'name')
-                ->searchable()
+                ->required()
+                ->searchable(),
+            Forms\Components\TextInput::make('nominal')
+                ->label('Nominal Donasi')
+                ->numeric()
                 ->required(),
-             Forms\Components\TextInput::make('no_hp')
-                ->label('Nomor Handphone'),
-             Forms\Components\TextInput::make('motivasi')
-                ->label('Motivasi')
-                ->columnSpanFull(),
+            Forms\Components\Textarea::make('ucapan')
+                ->label('Ucapan')
+                ->rows(2)
+                ->required(),
         ]);
     }
 
@@ -34,16 +38,18 @@ class PesertasRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Nama Peserta'),
+                    ->label('Nama Donatur')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('nominal')
+                    ->label('Nominal')
+                    ->money('IDR', true),
+                Tables\Columns\TextColumn::make('ucapan')
+                    ->label('Ucapan')
+                    ->limit(30)
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->label('Bergabung'),
-                Tables\Columns\TextColumn::make('sertifikat.sertifikat_url')
-                    ->label('Sertifikat')
-                    ->formatStateUsing(fn ($state) => $state ? 'Lihat Sertifikat' : 'Belum Ada')
-                    ->url(fn ($state) => $state ? asset($state) : null)
-                    ->openUrlInNewTab()
-                    ->color(fn ($state) => $state ? 'info' : 'gray'),
+                    ->label('Tanggal')
+                    ->dateTime('d M Y H:i'),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),

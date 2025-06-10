@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ProgramDonasi;
 use App\Models\DonasiPeserta;
 use App\Models\User;
+use Carbon\Carbon;
 
 class programDonasiController extends Controller
 {
@@ -15,6 +16,7 @@ class programDonasiController extends Controller
      */
     public function index()
     {
+        Carbon::setLocale('id');
         $limit = request('limit', 10);
         $search = request('search');
         
@@ -37,7 +39,7 @@ class programDonasiController extends Controller
                     'id' => $donasi->id,
                     'title' => $donasi->nama_program,
                     'description' => $donasi->deskripsi,
-                    'start_date' => $donasi->tanggal_mulai,
+                    'start_date' => Carbon::parse($donasi->tanggal_mulai)->translatedFormat('d F Y'),
                     'image_url' => $donasi->gambar,
                     'jumlah_pendonasi' => $donasi->pesertas_count,
                 ];
@@ -105,8 +107,9 @@ class programDonasiController extends Controller
      */
     public function show(string $id)
     {
-                $donasi = ProgramDonasi::with(['pesertas.user'])->find($id);
-        
+        $donasi = ProgramDonasi::with(['pesertas.user'])->find($id);
+        Carbon::setLocale('id');
+
         if (!$donasi) {
             return response()->json([
                 'status' => 'error',
@@ -131,8 +134,9 @@ class programDonasiController extends Controller
                 'category' => $donasi->category,
                 'description' => $donasi->deskripsi,
                 'status' => $donasi->status,
-                'tanggal_mulai' => $donasi->tanggal_mulai,
-                'tanggal_selesai' => $donasi->tanggal_selesai,
+                'tanggal_mulai' => Carbon::parse($donasi->tanggal_mulai)->translatedFormat('d F Y'),
+                'tanggal_selesai' => Carbon::parse($donasi->tanggal_selesai)->translatedFormat('d F Y'),
+                'kontak' => $donasi->kontak,
                 'gambar' => $donasi->gambar,
                 'pendonasi' => $pesertas,
             ];

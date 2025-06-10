@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ProgramDonasiResource\RelationManagers\PesertasRelationManager;
 
 class ProgramDonasiResource extends Resource
 {
@@ -25,19 +26,37 @@ class ProgramDonasiResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('program_id')
-                    ->numeric(),
-                Forms\Components\TextInput::make('jumlah')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('metode_pembayaran')
+                Forms\Components\TextInput::make('nama_program')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('tanggal')
+                Forms\Components\TextInput::make('category')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('deskripsi')
+                    ->required()
+                    ->columnSpanFull(),
+                Forms\Components\Select::make('status')
+                    ->label('Status')
+                    ->options([
+                        'Belum Mulai' => 'Belum Mulai',
+                        'Berlangsung' => 'Berlangsung',
+                        'Selesai' => 'Selesai',
+                    ])
+                    ->required()
+                    ->native(false),
+                Forms\Components\DatePicker::make('tanggal_mulai')
                     ->required(),
+                Forms\Components\DatePicker::make('tanggal_selesai')
+                    ->required(),
+                Forms\Components\Hidden::make('user_id')
+                    ->default(fn () => auth()->id()),
+                Forms\Components\FileUpload::make('gambar')
+                    ->label('Gambar')
+                    ->image()
+                    ->required()
+                    ->directory('image/donasi')
+                    ->imagePreviewHeight('250')
+                    ->maxSize(1024),
             ]);
     }
 
@@ -45,20 +64,18 @@ class ProgramDonasiResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('program_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('jumlah')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('metode_pembayaran')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('tanggal')
-                    ->dateTime()
-                    ->sortable(),
+                Tables\Columns\ImageColumn::make('gambar')
+                    ->label('Gambar')
+                    ->circular()
+                    ->size(60)
+                    ->disk('public')
+                    ->visibility('public')
+                    ->url(fn ($record) => asset('storage/' . $record->gambar)),
+                Tables\Columns\TextColumn::make('nama_program')->searchable(),
+                Tables\Columns\TextColumn::make('category')->searchable(),
+                Tables\Columns\TextColumn::make('status')->searchable(),
+                Tables\Columns\TextColumn::make('tanggal_mulai')->date()->sortable(),
+                Tables\Columns\TextColumn::make('tanggal_selesai')->date()->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -72,7 +89,9 @@ class ProgramDonasiResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -81,10 +100,16 @@ class ProgramDonasiResource extends Resource
             ]);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('user_id', auth()->id());
+    }
+
     public static function getRelations(): array
     {
         return [
-            //
+            PesertasRelationManager::class,
         ];
     }
 

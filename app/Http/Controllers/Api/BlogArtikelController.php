@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BlogArtikel;
+use Carbon\Carbon;
 
 class BlogArtikelController extends Controller
 {
     public function index(Request $request)
     {
+        Carbon::setLocale('id');
         $limit = $request->input('limit', 10);
         $search = $request->input('search');
 
@@ -35,7 +37,7 @@ class BlogArtikelController extends Controller
                     'lokasi' => $artikel->lokasi,
                     'konten' => \Str::limit(strip_tags($artikel->konten), 100),
                     'penulis' => $artikel->user->name ?? null,
-                    'tanggal_diterbitkan' => $artikel->tanggal_diterbitkan,
+                    'tanggal_diterbitkan' => Carbon::parse($artikel->tanggal_diterbitkan)->translatedFormat('d F Y'),
                     'gambar' => $artikel->gambar,
                 ];
             }),

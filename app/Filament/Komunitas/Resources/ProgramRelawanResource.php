@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ProgramRelawanResource\RelationManagers\PesertasRelationManager;
+use App\Filament\Resources\ProgramRelawanResource\RelationManagers\TestimoniRelationManager;
 
 class ProgramRelawanResource extends Resource
 {
@@ -28,19 +30,39 @@ class ProgramRelawanResource extends Resource
                 Forms\Components\TextInput::make('nama_program')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('category')
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\Textarea::make('deskripsi')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('status')
+                Forms\Components\Select::make('status')
+                    ->label('Status')
+                    ->options([
+                        'Belum Mulai' => 'Belum Mulai',
+                        'Berlangsung' => 'Berlangsung',
+                        'Selesai' => 'Selesai',
+                    ])
                     ->required()
-                    ->maxLength(255),
+                    ->native(false),
                 Forms\Components\DatePicker::make('tanggal_mulai')
                     ->required(),
                 Forms\Components\DatePicker::make('tanggal_selesai')
                     ->required(),
-                Forms\Components\TextInput::make('user_id')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Hidden::make('user_id')
+                    ->default(fn () => auth()->id()),
+                Forms\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\FileUpload::make('gambar')
+                            ->label('Gambar')
+                            ->image()
+                            ->required()
+                            ->directory('image/relawan')
+                            ->imagePreviewHeight(250)
+                            ->maxSize(1024)
+                            ->columnSpan(1),
+                    ])
+
             ]);
     }
 
@@ -48,19 +70,21 @@ class ProgramRelawanResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nama_program')
+                Tables\Columns\ImageColumn::make('gambar')
+                    ->label('Gambar')
+                    ->circular()
+                    ->size(60)
+                    ->disk('public')
+                    ->visibility('public')
+                    ->url(fn ($record) => asset('storage/' . $record->gambar)),
+                Tables\Columns\TextColumn::make('nama_program')->searchable(),
+                Tables\Columns\TextColumn::make('category')->searchable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Dibuat Oleh')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('tanggal_mulai')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('tanggal_selesai')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('user_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('status')->searchable(),
+                Tables\Columns\TextColumn::make('tanggal_mulai')->date()->sortable(),
+                Tables\Columns\TextColumn::make('tanggal_selesai')->date()->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -91,7 +115,8 @@ class ProgramRelawanResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            PesertasRelationManager::class,
+            TestimoniRelationManager::class,
         ];
     }
 

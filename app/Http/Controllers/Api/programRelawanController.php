@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ProgramRelawan;
 use App\Models\RelawanPeserta;
+use Carbon\Carbon;
 
 class programRelawanController extends Controller
 {
@@ -14,16 +15,14 @@ class programRelawanController extends Controller
      */
     public function index()
     {
+        Carbon::setLocale('id');
         $limit = request('limit', 10);
         $search = request('search');
         
         $query = ProgramRelawan::withCount('pesertas');
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_program', 'like', '%' . $search . '%')
-                ->orWhere('deskripsi', 'like', '%' . $search . '%');
-            });
+            $query->where('nama_program', 'like', '%' . $search . '%');
         }
 
         $relawans = $query->paginate($limit);
@@ -36,7 +35,7 @@ class programRelawanController extends Controller
                     'id' => $relawan->id,
                     'title' => $relawan->nama_program,
                     'description' => $relawan->deskripsi,
-                    'start_date' => $relawan->tanggal_mulai,
+                    'start_date' => Carbon::parse($relawan->tanggal_mulai)->translatedFormat('d F Y'),
                     'image_url' => $relawan->gambar,
                     'jumlah_peserta' => $relawan->pesertas_count,
                 ];
@@ -95,6 +94,7 @@ class programRelawanController extends Controller
      */
     public function show(string $id)
     {
+        Carbon::setLocale('id');
         $relawan = ProgramRelawan::with(['pesertas.user', 'testimoniRatings.user'])->find($id);
         
         if (!$relawan) {
@@ -104,16 +104,18 @@ class programRelawanController extends Controller
             ], 404);
         }
 
-        $testimoni = $relawan->testimoniRatings->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'user_id' => $item->user_id,
-                'user_name' => $item->user->name ?? null,
-                'pesan' => $item->pesan,
-                'rating' => $item->rating,
-                'tanggal' => $item->created_at,
-            ];
-        });
+        $testimoni = $relawan->testimoniRatings()
+            ->paginate(10)
+            ->through(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'user_id' => $item->user_id,
+                    'user_name' => $item->user->name ?? null,
+                    'pesan' => $item->pesan,
+                    'rating' => $item->rating,
+                    'tanggal' => $item->created_at,
+                ];
+            });
 
         $pesertas = $relawan->pesertas->map(function ($peserta) {
             return [
@@ -130,8 +132,9 @@ class programRelawanController extends Controller
                 'category' => $relawan->category,
                 'description' => $relawan->deskripsi,
                 'status' => $relawan->status,
-                'tanggal_mulai' => $relawan->tanggal_mulai,
-                'tanggal_selesai' => $relawan->tanggal_selesai,
+                'tanggal_mulai' => Carbon::parse($relawan->tanggal_mulai)->translatedFormat('d F Y'),
+                'tanggal_selesai' => Carbon::parse($relawan->tanggal_selesai)->translatedFormat('d F Y'),
+                'kontak' => $relawan->kontak,
                 'gambar' => $relawan->gambar,
                 'pesertas' => $pesertas,
                 'testimoni' => $testimoni,
