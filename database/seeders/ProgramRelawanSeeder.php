@@ -25,7 +25,8 @@ class ProgramRelawanSeeder extends Seeder
                 'tanggal_mulai' => now()->addDays($i),
                 'tanggal_selesai' => now()->addDays($i + 7),
                 'user_id' => $user->id,
-                'gambar' => 'image/relawan/sample' . $i . '.jpg', // Pastikan file ini tersedia di storage
+                'kontak' => '@pendidikan',
+                'gambar' => 'image/relawan/sample' . $i . '.jpg',
             ]);
         }
     }

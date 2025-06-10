@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('status', ['Belum Mulai', 'Berlangsung', 'Selesai']);
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
+            $table->string('kontak');
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->string('gambar');
             $table->timestamps();

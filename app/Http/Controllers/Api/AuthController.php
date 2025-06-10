@@ -10,11 +10,19 @@ use App\Models\User;
 use App\Models\RelawanPeserta;
 use App\Models\DonasiPeserta;
 use App\Models\Sertifikat;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
+    public function isAuth(Request $request){
+        $isAuth= User::where('remember_token', $request->token)->count();
+
+        return response()->json($isAuth);
+    }
+
     public function profile(Request $request)
     {
+        Carbon::setLocale('id');
         $user = $request->user();
 
         if (!$user) {
@@ -39,27 +47,27 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'created_at' => $user->created_at->format('Y-m-d'),
+                'created_at' => Carbon::parse($user->created_at)->translatedFormat('d F Y'),
                 'point' => $user->point ?? 0,
             ],
             'riwayat_relawan' => $riwayatRelawan->map(function ($item) use ($user) {
                 $program = $item->programRelawan;
-                $sertifikat = $item->sertifikat;
+                $sertifikat =    $item->sertifikat;
 
                 return [
                     'judul' => $program->nama_program ?? '-',
-                    'sudah_berdonasi' => false,
-                    'tanggal_mulai' => $program->tanggal_mulai ?? null,
-                    'tanggal_selesai' => $program->tanggal_selesai ?? null,
+                    'tanggal_bergabung' => Carbon::parse($program->created_at)->translatedFormat('d F Y'),
+                    'tanggal_mulai' => Carbon::parse($program->tanggal_mulai)->translatedFormat('d F Y') ?? null,
+                    'tanggal_selesai' => Carbon::parse($program->tanggal_selesai)->translatedFormat('d F Y') ?? null,
                     'sertifikat_url' => $sertifikat?->sertifikat_url,
                 ];
             }),
             'riwayat_donasi' => $riwayatDonasi->map(function ($item) {
                 return [
                     'judul' => $item->programDonasi->nama_program ?? '-',
-                    'bergabung' => true,
-                    'tanggal_mulai' => $item->programDonasi->tanggal_mulai ?? null,
-                    'tanggal_selesai' => $item->programDonasi->tanggal_selesai ?? null
+                    'tanggal_donasi' => Carbon::parse($item->programDonasi->created_at)->translatedFormat('d F Y'),
+                    'tanggal_mulai' => Carbon::parse($item->programDonasi->tanggal_mulai)->translatedFormat('d F Y') ?? null,
+                    'tanggal_selesai' => Carbon::parse($item->programDonasi->tanggal_selesai)->translatedFormat('d F Y') ?? null
                 ];
             }),
         ]);
@@ -112,11 +120,15 @@ class AuthController extends Controller
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Email atau password salah',
+                'message' => 'Email atau password salah',   
             ], 401);
         }
 
         $token = $user->createToken('api_token')->plainTextToken;
+
+        $user->update([
+            "remember_token" => $token
+        ]);
 
         return response()->json([
             'status' => 'success',

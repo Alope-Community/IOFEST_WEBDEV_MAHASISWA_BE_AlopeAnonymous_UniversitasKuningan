@@ -21,14 +21,14 @@ class User extends Authenticatable implements FilamentUser
      *
      * @var list<string>
      */
-    protected $fillable = ['name', 'email', 'password', 'role', 'point'];
+    protected $fillable = ['name', 'email', 'password', 'role', 'point', 'remember_token'];
 
     public function programRelawan()
     {
         return $this->hasMany(ProgramRelawan::class);
     }
 
-    public function donasi()
+    public function porgramDonasi()
     {
         return $this->hasMany(ProgramDonasi::class);
     }
@@ -62,6 +62,7 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(UserPoinHistory::class);
     }
+    
     public function tambahPoin(int $jumlah, string $aktivitas, string $keterangan = null): void
     {
         $this->increment('point', $jumlah);

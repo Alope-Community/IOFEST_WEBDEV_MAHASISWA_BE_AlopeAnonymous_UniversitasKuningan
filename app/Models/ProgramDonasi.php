@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProgramDonasi extends Model
 {
-    protected $fillable = ['nama_program', 'deskripsi', 'status', 'tanggal_mulai', 'tanggal_selesai', 'user_id', 'gambar'];
+    protected $fillable = ['nama_program','category', 'deskripsi', 'status', 'tanggal_mulai', 'tanggal_selesai', 'user_id', 'kontak', 'gambar'];
 
     public function user()
     {

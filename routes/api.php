@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\ForumController;
 // ============================
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/isAuth', [AuthController::class, 'isAuth']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -29,7 +30,7 @@ Route::prefix('relawan')->group(function () {
     Route::get('/', [ProgramRelawanController::class, 'index'])->name('relawan.index');
     Route::get('/{id}', [ProgramRelawanController::class, 'show'])->name('relawan.show');
 
-    Route::middleware('auth:sanctum')->post('/{id}/daftar', [ProgramRelawanController::class, 'store']);
+    Route::middleware('auth:sanctum')->post('/daftar', [ProgramRelawanController::class, 'store']);
 
     // Testimoni
     Route::get('all/testimoni', [TestimoniRatingController::class, 'index']);

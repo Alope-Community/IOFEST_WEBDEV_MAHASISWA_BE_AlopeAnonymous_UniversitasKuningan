@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProgramRelawan extends Model
 {
-    protected $fillable = ['nama_program', 'deskripsi', 'status', 'tanggal_mulai', 'tanggal_selesai', 'user_id', 'gambar'];
+    protected $fillable = ['nama_program', 'category', 'deskripsi', 'status', 'tanggal_mulai', 'tanggal_selesai', 'user_id', 'kontak', 'gambar'];
 
     public function user()
     {
@@ -31,15 +31,5 @@ class ProgramRelawan extends Model
     public function forumDiskusi()
     {
         return $this->hasMany(ForumDiskusi::class);
-    }
-
-    public function kalenderKegiatan()
-    {
-        return $this->hasMany(KalenderKegiatan::class);
-    }
-
-    public function statistikLaporan()
-    {
-        return $this->hasMany(StatistikLaporan::class);
     }
 }
