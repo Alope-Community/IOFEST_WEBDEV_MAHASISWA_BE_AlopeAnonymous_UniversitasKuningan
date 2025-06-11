@@ -48,7 +48,7 @@ Route::prefix('donasi')->group(function () {
     Route::get('/', [ProgramDonasiController::class, 'index'])->name('donasi.index');
     Route::get('/{id}', [ProgramDonasiController::class, 'show'])->name('donasi.show');
 
-    Route::middleware('auth:sanctum')->post('/{id}/daftar', [ProgramDonasiController::class, 'store']);
+    Route::middleware('auth:sanctum')->post('/daftar', [ProgramDonasiController::class, 'store']);
 });
 
 // ============================
