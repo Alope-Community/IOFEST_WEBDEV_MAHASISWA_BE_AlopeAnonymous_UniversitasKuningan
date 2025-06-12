@@ -31,9 +31,8 @@ class BlogArtikelResource extends Resource
                 Forms\Components\Textarea::make('konten')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('user_id')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Hidden::make('user_id')
+                    ->default(fn () => auth()->id()),
                 Forms\Components\DateTimePicker::make('tanggal_diterbitkan')
                     ->required(),
             ]);
@@ -45,12 +44,10 @@ class BlogArtikelResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('judul')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user_id')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('tanggal_diterbitkan')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->default(now()),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -71,6 +68,11 @@ class BlogArtikelResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('user_id', auth()->id());
     }
 
     public static function getRelations(): array

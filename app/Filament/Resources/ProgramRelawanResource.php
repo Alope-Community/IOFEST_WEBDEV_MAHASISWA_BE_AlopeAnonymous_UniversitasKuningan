@@ -46,13 +46,13 @@ class ProgramRelawanResource extends Resource
                     ])
                     ->required()
                     ->native(false),
+                Forms\Components\TextInput::make('kontak')
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\DatePicker::make('tanggal_mulai')
                     ->required(),
                 Forms\Components\DatePicker::make('tanggal_selesai')
                     ->required(),
-                Forms\Components\TextInput::make('kontak')
-                    ->required()
-                    ->maxLength(255),
                 Forms\Components\Select::make('user_id')
                     ->label('User')
                     ->relationship('user', 'name')
@@ -85,9 +85,9 @@ class ProgramRelawanResource extends Resource
                     ->label('Dibuat Oleh')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')->searchable(),
+                Tables\Columns\TextColumn::make('kontak')->searchable(),
                 Tables\Columns\TextColumn::make('tanggal_mulai')->date()->sortable(),
                 Tables\Columns\TextColumn::make('tanggal_selesai')->date()->sortable(),
-                Tables\Columns\TextColumn::make('kontak')->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

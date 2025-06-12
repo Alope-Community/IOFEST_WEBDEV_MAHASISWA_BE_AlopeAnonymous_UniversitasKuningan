@@ -36,6 +36,7 @@ class AuthController extends Controller
                     ->where('user_id', $user->id)
                     ->get();
 
+
         $riwayatDonasi = DonasiPeserta::with('programDonasi')
             ->where('user_id', $user->id)
             ->get();
@@ -77,16 +78,9 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
-
-        if (User::where('email', $validated['email'])->exists()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Email sudah digunakan',
-            ], 409);
-        }
 
         // Buat user baru
         $user = User::create([
