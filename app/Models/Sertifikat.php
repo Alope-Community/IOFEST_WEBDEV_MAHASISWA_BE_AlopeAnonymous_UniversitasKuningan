@@ -15,6 +15,6 @@ class Sertifikat extends Model
 
     public function program()
     {
-        return $this->belongsTo(ProgramRelawan::class);
+        return $this->belongsTo(ProgramRelawan::class, 'program_id');
     }
 }

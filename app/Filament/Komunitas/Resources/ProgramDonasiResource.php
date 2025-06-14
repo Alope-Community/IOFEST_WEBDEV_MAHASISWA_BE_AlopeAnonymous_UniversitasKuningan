@@ -44,6 +44,9 @@ class ProgramDonasiResource extends Resource
                     ])
                     ->required()
                     ->native(false),
+                Forms\Components\TextInput::make('kontak')
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\DatePicker::make('tanggal_mulai')
                     ->required(),
                 Forms\Components\DatePicker::make('tanggal_selesai')
@@ -56,7 +59,6 @@ class ProgramDonasiResource extends Resource
                     ->required()
                     ->directory('image/donasi')
                     ->imagePreviewHeight('250')
-                    ->maxSize(1024),
             ]);
     }
 
@@ -74,6 +76,7 @@ class ProgramDonasiResource extends Resource
                 Tables\Columns\TextColumn::make('nama_program')->searchable(),
                 Tables\Columns\TextColumn::make('category')->searchable(),
                 Tables\Columns\TextColumn::make('status')->searchable(),
+                Tables\Columns\TextColumn::make('kontak')->searchable(),
                 Tables\Columns\TextColumn::make('tanggal_mulai')->date()->sortable(),
                 Tables\Columns\TextColumn::make('tanggal_selesai')->date()->sortable(),
                 Tables\Columns\TextColumn::make('created_at')

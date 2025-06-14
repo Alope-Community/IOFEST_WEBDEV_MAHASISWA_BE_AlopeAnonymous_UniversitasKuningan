@@ -18,7 +18,7 @@ public function index(Request $request)
     $query = ForumDiskusi::with([
         'user',
         'komentars' => function ($q) {
-            $q->latest('tanggal_komentar')->limit(1)->with('user');
+            $q->with('user');
         }
     ])->orderBy('tanggal_dibuat', 'desc');
 
